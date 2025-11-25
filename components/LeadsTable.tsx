@@ -14,7 +14,8 @@ interface SortConfig {
 }
 
 const LeadsTable: React.FC<LeadsTableProps> = ({ conversations }) => {
-    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'created_at', direction: 'descending' });
+    // ALTERAÇÃO: Ordenação padrão agora é pelo Pipeline (ascending = ordem do funil)
+    const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'pipeline', direction: 'ascending' });
   
     const columns = [
       { key: 'nome', label: 'Nome' },
@@ -37,12 +38,31 @@ const LeadsTable: React.FC<LeadsTableProps> = ({ conversations }) => {
           const aValue = aRaw ?? '';
           const bValue = bRaw ?? '';
   
+          // Lógica de ordenação específica para Pipeline (baseada na ordem das colunas do Kanban)
+          if (sortConfig.key === 'pipeline') {
+            const pipeA = getNormalizedPipeline(aValue as string);
+            const pipeB = getNormalizedPipeline(bValue as string);
+            
+            // Encontra o índice (peso) de cada status na lista oficial de colunas
+            const indexA = KANBAN_COLUMNS.findIndex(col => col.id === pipeA);
+            const indexB = KANBAN_COLUMNS.findIndex(col => col.id === pipeB);
+
+            // Se não encontrar (index -1), joga para o final
+            const weightA = indexA === -1 ? 999 : indexA;
+            const weightB = indexB === -1 ? 999 : indexB;
+
+            return sortConfig.direction === 'ascending' 
+                ? weightA - weightB 
+                : weightB - weightA;
+          }
+
           if (sortConfig.key === 'created_at') {
             const dateA = new Date(aValue as string).getTime() || 0;
             const dateB = new Date(bValue as string).getTime() || 0;
             return sortConfig.direction === 'ascending' ? dateA - dateB : dateB - dateA;
           }
   
+          // Ordenação padrão (alfabética/numérica) para outras colunas
           if (aValue < bValue) return sortConfig.direction === 'ascending' ? -1 : 1;
           if (aValue > bValue) return sortConfig.direction === 'ascending' ? 1 : -1;
           return 0;
