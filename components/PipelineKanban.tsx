@@ -53,7 +53,14 @@ const PipelineKanban: React.FC<PipelineKanbanProps> = ({ conversations, updateCo
           </div>
       </div>
 
-      <div className="flex gap-4 min-w-[1200px] xl:min-w-0 xl:grid xl:grid-cols-5 pb-4">
+      {/* 
+         ALTERAÇÃO DE LAYOUT:
+         - gap-6: Aumentado espaçamento entre colunas (de 16px para 24px)
+         - min-w-[1350px]: Garante largura total suficiente no modo scroll
+         - 2xl:grid: Só ativa o modo grid (sem scroll) em telas muito grandes (>1536px)
+         - shrink-0: Impede que as colunas encolham e se sobreponham
+      */}
+      <div className="flex gap-6 min-w-[1350px] 2xl:min-w-0 2xl:grid 2xl:grid-cols-5 pb-6">
         {KANBAN_COLUMNS.map(column => (
           <div
             key={column.id}
@@ -61,11 +68,12 @@ const PipelineKanban: React.FC<PipelineKanbanProps> = ({ conversations, updateCo
             onDragOver={handleDragOver}
             className={`
                 flex flex-col 
+                shrink-0
                 rounded-xl 
                 bg-slate-800/50 
                 border border-white/5 
                 h-[calc(100vh-12rem)] 
-                min-w-[280px]
+                w-[280px] 2xl:w-auto
                 transition-colors hover:bg-slate-800/80
             `}
           >
