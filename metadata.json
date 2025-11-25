@@ -1,0 +1,5 @@
+{
+  "name": "primeiro teste",
+  "description": "A real-time dashboard for managing AI leads with Kanban pipeline, data tables, and analytics overview using Supabase.",
+  "requestFramePermissions": []
+}
