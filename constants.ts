@@ -1,9 +1,30 @@
 import { CheckCircle, XCircle, Star, MessageCircle, FileText, Bot } from 'lucide-react';
 import { KanbanColumnDef, StatusStyleDef, Conversation } from './types';
 
+// Função auxiliar para obter variáveis de ambiente de forma segura (suporta Vite e CRA)
+const getEnv = (key: string, fallback: string): string => {
+  try {
+    // @ts-ignore - Suporte a Vite
+    if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key]) {
+      // @ts-ignore
+      return import.meta.env[key];
+    }
+    // @ts-ignore - Suporte a CRA/Node
+    if (typeof process !== 'undefined' && process.env && process.env[key]) {
+      // @ts-ignore
+      return process.env[key];
+    }
+  } catch (e) {
+    // Ignora erros de acesso a env
+  }
+  return fallback;
+};
+
 // --- SUPABASE CONFIGURATION ---
-export const SUPABASE_URL = 'https://ttuasjspbpifxvstabts.supabase.co';
-export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0dWFzanNwYnBpZnh2c3RhYnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MjM4MDIsImV4cCI6MjA3OTI5OTgwMn0.yzHY9BBn77clIjeCz14Y7cJZ5a0CAOV4Ge0CFfK5ma4';
+// Tenta pegar das variáveis de ambiente primeiro. Se não achar, usa o valor hardcoded (fallback).
+export const SUPABASE_URL = getEnv('VITE_SUPABASE_URL', getEnv('REACT_APP_SUPABASE_URL', 'https://ttuasjspbpifxvstabts.supabase.co'));
+export const SUPABASE_ANON_KEY = getEnv('VITE_SUPABASE_ANON_KEY', getEnv('REACT_APP_SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0dWFzanNwYnBpZnh2c3RhYnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MjM4MDIsImV4cCI6MjA3OTI5OTgwMn0.yzHY9BBn77clIjeCz14Y7cJZ5a0CAOV4Ge0CFfK5ma4'));
+
 export const TABLE_NAME = 'testeAI';
 export const POLLING_INTERVAL_MS = 5000;
 
